@@ -2,205 +2,258 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROCADE Social Board</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ROCADE MOBILE</title>
     <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
         :root {
-            --bg-color: #f4f5f9;
-            --user-bubble: #e8f0fe;
-            --admin-bubble: #ffffff;
-            --text-main: #333;
-            --text-sub: #a0a0a0;
+            --bg-color: #f2f3f7; /* 사진 속 특유의 연그레이 배경 */
+            --user-bubble: #e8f0fe; /* 질문 하늘색 */
+            --admin-bubble: #ffffff; /* 답변 흰색 */
+            --text-main: #333333;
+            --text-sub: #999999;
             --accent: #7b61ff;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: var(--bg-color);
             margin: 0; display: flex; flex-direction: column; height: 100vh;
+            overflow: hidden;
         }
 
+        /* 상단 바 - 사진 디자인 재현 */
         header {
-            padding: 12px 20px; background: white; border-bottom: 1px solid #eee;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100;
+            padding: 10px 16px; background: white; border-bottom: 1px solid #eaeaea;
+            display: flex; flex-direction: column; gap: 8px; position: sticky; top: 0; z-index: 100;
         }
-        .login-box input { padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 11px; width: 70px; }
-        .login-btn { padding: 4px 10px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; }
-
-        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .message-group { display: flex; flex-direction: column; gap: 5px; }
-
-        /* 말풍선 스타일 및 줄바꿈 허용 */
-        .bubble {
-            max-width: 75%; padding: 10px 14px; font-size: 13.5px; line-height: 1.5;
-            white-space: pre-wrap; /* 줄바꿈(\n) 반영 */
-            word-break: break-all;
-            position: relative;
-        }
-
-        .more-btn {
-            color: var(--accent); font-size: 12px; cursor: pointer; font-weight: bold; margin-top: 4px; display: block;
-        }
-
-        /* 질문 (우측) */
-        .question-box { align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; }
-        .guest-bubble { background: var(--user-bubble); border-radius: 15px 15px 2px 15px; color: #444; }
-
-        /* 답변 (좌측) */
-        .answer-box { align-self: flex-start; display: flex; gap: 10px; margin-top: 5px; }
-        .admin-profile { width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 11px; flex-shrink: 0; }
-        .admin-info { display: flex; flex-direction: column; gap: 3px; }
-        .admin-name-row { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: bold; }
-        .admin-bubble { background: white; border-radius: 2px 15px 15px 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-
-        .time { font-size: 10px; color: var(--text-sub); margin: 2px 5px; }
-
-        .reply-btn { display: none; background: none; border: 1px solid #ccc; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; color: #888; margin-bottom: 5px; }
-        .is-logged-in .reply-btn { display: block; }
-
-        /* 입력창 */
-        .input-area { background: white; padding: 12px 20px; border-top: 1px solid #eee; }
-        .input-wrapper { display: flex; gap: 10px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 18px; font-weight: 800; color: #222; letter-spacing: -0.5px; }
         
-        /* 줄바꿈이 가능하도록 textarea 사용 */
-        textarea { 
-            flex: 1; padding: 10px; border: 1px solid #f0f0f0; border-radius: 8px; 
-            background: #f8f9fa; outline: none; resize: none; font-family: inherit; height: 40px;
+        .login-form { display: flex; gap: 4px; }
+        .login-form input { 
+            width: 65px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 10px; outline: none;
         }
-        #send-btn { background: var(--accent); color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-sm { 
+            padding: 4px 8px; background: var(--accent); color: white; border: none; border-radius: 4px; font-size: 10px; cursor: pointer;
+        }
 
-        .badge-svg { width: 14px; height: 14px; }
+        .breadcrumb { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; }
+
+        /* 채팅 리스트 */
+        #chat-container {
+            flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px;
+            scroll-behavior: smooth;
+        }
+
+        .msg-row { display: flex; flex-direction: column; position: relative; }
+
+        /* 말풍선 공통 - 사진 속 둥글기 재현 */
+        .bubble {
+            max-width: 80%; padding: 11px 14px; font-size: 14px; line-height: 1.6;
+            white-space: pre-wrap; word-break: break-all; position: relative;
+        }
+
+        /* 질문 (오른쪽) */
+        .q-row { align-items: flex-end; }
+        .q-bubble {
+            background: var(--user-bubble);
+            border-radius: 18px 18px 4px 18px; /* 사진 스타일 */
+            color: #333;
+        }
+
+        /* 답변 (왼쪽) */
+        .a-row { flex-direction: row; gap: 10px; align-items: flex-start; margin-top: 4px; }
+        .profile {
+            width: 38px; height: 38px; border-radius: 14px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: bold; font-size: 12px;
+        }
+        .a-content { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .name-badge { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: #222; }
+        .a-bubble {
+            background: var(--admin-bubble);
+            border-radius: 4px 18px 18px 18px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            align-self: flex-start;
+        }
+
+        .info-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+        .time { font-size: 10px; color: var(--text-sub); }
+
+        /* 기능: 더보기/접기 */
+        .more-toggle {
+            display: inline-block; color: var(--accent); font-size: 12px; font-weight: bold; 
+            margin-top: 5px; cursor: pointer; text-decoration: underline;
+        }
+
+        /* 기능: 답변하기 버튼 (관리자용) */
+        .reply-btn {
+            display: none; font-size: 11px; color: #777; background: white; border: 1px solid #ddd;
+            border-radius: 10px; padding: 2px 8px; cursor: pointer; margin-right: 5px;
+        }
+        .is-admin .reply-btn { display: inline-block; }
+
+        /* 하단 입력창 - 핸드폰 UI 최적화 */
+        .footer {
+            background: white; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+            border-top: 1px solid #eee; display: flex; gap: 10px; align-items: flex-end;
+        }
+        textarea {
+            flex: 1; min-height: 40px; max-height: 120px; padding: 10px 14px;
+            background: #f5f6f8; border: 1px solid #efefef; border-radius: 20px;
+            font-size: 14px; font-family: inherit; outline: none; resize: none;
+        }
+        #send-btn {
+            width: 40px; height: 40px; background: var(--accent); color: white;
+            border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; flex-shrink: 0; font-weight: bold;
+        }
+
+        /* 16각 별 뱃지 */
+        .badge { width: 15px; height: 15px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-weight: 800; color: #555;">ROCADE</div>
-    <div id="auth-ui" class="login-box">
-        <input type="text" id="id-in" placeholder="ID">
-        <input type="password" id="pw-in" placeholder="PW">
-        <button class="login-btn" onclick="login()">Login</button>
+    <div class="header-top">
+        <div class="logo">ROCADE</div>
+        <div id="auth-area" class="login-form">
+            <input type="text" id="uid" placeholder="ID">
+            <input type="password" id="upw" placeholder="PW">
+            <button class="btn-sm" onclick="tryLogin()">Login</button>
+        </div>
     </div>
+    <div class="breadcrumb">케일룸 · 아케이드 · 게시판 👈</div>
 </header>
 
 <div id="chat-container"></div>
 
-<div class="input-area">
-    <div class="input-wrapper">
-        <textarea id="msg-input" placeholder="내용을 입력하세요 (Shift+Enter 줄바꿈)" onkeypress="handleEnter(event)"></textarea>
-        <button id="send-btn" onclick="sendQ()">보내기</button>
-    </div>
+<div class="footer">
+    <textarea id="msg-in" placeholder="문의 내용을 입력해주세요..." rows="1" oninput="autoResize(this)"></textarea>
+    <button id="send-btn" onclick="postQ()">▶</button>
 </div>
 
 <svg style="display:none">
-    <symbol id="star-icon" viewBox="0 0 24 24">
+    <symbol id="star-check" viewBox="0 0 24 24">
         <path d="M12 0l1.5 3.5L17 2l.5 4.5L22 7l-3.5 1.5L24 12l-5.5 1.5L22 17l-4.5.5L17 22l-3.5-3.5L12 24l-1.5-3.5L7 22l-.5-4.5L2 17l3.5-1.5L0 12l5.5-1.5L2 7l4.5-.5L7 2l3.5 3.5z"/>
-        <path d="M8 12l3 3 6-6" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.5 12.5l2 2 5-5" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
 </svg>
 
 <script>
-    const users = {
-        "ARCEN": {pw: "01024773752", col: "#FF6B6B"},
-        "LUCA": {pw: "01024773752", col: "#6C5CE7"},
-        "ROCADE": {pw: "01024773752", col: "#FFB800"},
-        "DORE": {pw: "01024773752", col: "#20BF6B"}
+    const USERS = {
+        "ARCEN": {pw: "01024773752", color: "#FF6B6B"},
+        "LUCA": {pw: "01024773752", color: "#6C5CE7"},
+        "ROCADE": {pw: "01024773752", color: "#FFB800"},
+        "DORE": {pw: "01024773752", color: "#20BF6B"}
     };
 
-    let me = null;
-    let db = JSON.parse(localStorage.getItem('rocade_v3')) || [];
-    const LIMIT = 100; // 이 글자수 넘어가면 자름
+    let currentUser = null;
+    let data = JSON.parse(localStorage.getItem('rocade_final')) || [];
+    const CUT_LEN = 120; // 이 글자수 넘으면 생략
 
-    function login() {
-        const id = document.getElementById('id-in').value;
-        const pw = document.getElementById('pw-in').value;
-        if(users[id] && users[id].pw === pw) {
-            me = {id, ...users[id]};
-            document.body.classList.add('is-logged-in');
-            document.getElementById('auth-ui').innerHTML = `<b style="font-size:12px">${id}</b> <button onclick="location.reload()" class="login-btn" style="background:#888">Logout</button>`;
-            render();
-        } else { alert("로그인 실패!"); }
+    function autoResize(el) {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
     }
 
-    function handleEnter(e) {
-        if(e.keyCode === 13 && !e.shiftKey) {
-            e.preventDefault();
-            sendQ();
-        }
+    function tryLogin() {
+        const id = document.getElementById('uid').value;
+        const pw = document.getElementById('upw').value;
+        if(USERS[id] && USERS[id].pw === pw) {
+            currentUser = {id, ...USERS[id]};
+            document.body.classList.add('is-admin');
+            document.getElementById('auth-area').innerHTML = `<span style="font-size:11px; font-weight:700;">${id} ON</span> <button class="btn-sm" onclick="location.reload()" style="background:#888">Out</button>`;
+            render();
+        } else { alert("ID/PW 확인!"); }
     }
 
     function getTime() {
         const d = new Date();
-        const ampm = d.getHours() >= 12 ? '오후' : '오전';
-        return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${ampm} ${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}`;
+        const am = d.getHours() >= 12 ? '오후' : '오전';
+        const h = d.getHours() % 12 || 12;
+        return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${am} ${h}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
-    function sendQ() {
-        const el = document.getElementById('msg-input');
+    function postQ() {
+        const el = document.getElementById('msg-in');
         if(!el.value.trim()) return;
-        db.push({id: Date.now(), q: el.value, qt: getTime(), a: null, at: null, aid: null, qShowAll: false, aShowAll: false});
+        data.push({
+            id: Date.now(), text: el.value, time: getTime(), 
+            reply: null, rTime: null, rAdmin: null,
+            open: false, rOpen: false
+        });
         save();
-        el.value = '';
+        el.value = ''; el.style.height = '40px';
     }
 
-    function sendA(id) {
-        const txt = prompt("답변 입력 (줄바꿈은 \\n 을 사용하거나 입력창을 수정해 직접 넣으세요):");
+    function postA(id) {
+        const txt = prompt("답변을 입력하세요 (줄바꿈 가능):");
         if(!txt) return;
-        const target = db.find(p => p.id === id);
-        target.a = txt.replace(/\\n/g, '\n'); 
-        target.at = getTime(); target.aid = me.id;
+        const item = data.find(i => i.id === id);
+        item.reply = txt; item.rTime = getTime(); item.rAdmin = currentUser.id;
         save();
     }
 
-    function toggleShow(id, type) {
-        const target = db.find(p => p.id === id);
-        if(type === 'q') target.qShowAll = !target.qShowAll;
-        else target.aShowAll = !target.aShowAll;
+    function toggleText(id, type) {
+        const item = data.find(i => i.id === id);
+        if(type === 'q') item.open = !item.open;
+        else item.rOpen = !item.rOpen;
         render();
     }
 
     function save() {
-        localStorage.setItem('rocade_v3', JSON.stringify(db));
+        localStorage.setItem('rocade_final', JSON.stringify(data));
         render();
     }
 
     function render() {
         const cont = document.getElementById('chat-container');
         cont.innerHTML = '';
-        db.forEach(item => {
-            // 질문 텍스트 처리
-            const isQLong = item.q.length > LIMIT;
-            const qDisplay = (isQLong && !item.qShowAll) ? item.q.slice(0, LIMIT) + "..." : item.q;
+        
+        data.forEach(item => {
+            // 질문 가공
+            const isQLong = item.text.length > CUT_LEN;
+            const qTxt = (isQLong && !item.open) ? item.text.slice(0, CUT_LEN) + "..." : item.text;
 
-            let h = `<div class="message-group">
-                <div class="question-box">
-                    <div class="bubble guest-bubble">${qDisplay}${isQLong ? `<span class="more-btn" onclick="toggleShow(${item.id}, 'q')">${item.qShowAll ? '[접기]' : '[더보기]'}</span>` : ''}</div>
-                    <div style="display:flex; align-items:center">
-                        ${(!item.a && me) ? `<button class="reply-btn" onclick="sendA(${item.id})">답변하기</button>` : ''}
-                        <span class="time">${item.qt}</span>
+            let html = `
+                <div class="msg-row q-row">
+                    <div class="bubble q-bubble">${qTxt}${isQLong ? `<span class="more-toggle" onclick="toggleText(${item.id}, 'q')">${item.open ? '[접기]' : '[더보기]'}</span>` : ''}</div>
+                    <div class="info-row">
+                        ${(!item.reply && currentUser) ? `<button class="reply-btn" onclick="postA(${item.id})">답변하기</button>` : ''}
+                        <span class="time">${item.time}</span>
                     </div>
-                </div>`;
+                </div>
+            `;
 
-            if(item.a) {
-                const admin = users[item.aid];
-                const isALong = item.a.length > LIMIT;
-                const aDisplay = (isALong && !item.aShowAll) ? item.a.slice(0, LIMIT) + "..." : item.a;
+            // 답변 가공
+            if(item.reply) {
+                const adm = USERS[item.rAdmin];
+                const isRLong = item.reply.length > CUT_LEN;
+                const rTxt = (isRLong && !item.rOpen) ? item.reply.slice(0, CUT_LEN) + "..." : item.reply;
 
-                h += `<div class="answer-box">
-                    <div class="admin-profile" style="background:${admin.col}">${item.aid[0]}</div>
-                    <div class="admin-info">
-                        <div class="admin-name-row">${item.aid} <svg class="badge-svg" style="fill:${admin.col}"><use xlink:href="#star-icon"/></svg></div>
-                        <div class="bubble admin-bubble">${aDisplay}${isALong ? `<span class="more-btn" onclick="toggleShow(${item.id}, 'a')">${item.aShowAll ? '[접기]' : '[더보기]'}</span>` : ''}</div>
-                        <span class="time">${item.at}</span>
+                html += `
+                    <div class="msg-row a-row">
+                        <div class="profile" style="background:${adm.color}">${item.rAdmin[0]}</div>
+                        <div class="a-content">
+                            <div class="name-badge">
+                                ${item.rAdmin} <svg class="badge" style="fill:${adm.color}"><use xlink:href="#star-check"/></svg>
+                            </div>
+                            <div class="bubble a-bubble">${rTxt}${isRLong ? `<span class="more-toggle" onclick="toggleText(${item.id}, 'a')">${item.rOpen ? '[접기]' : '[더보기]'}</span>` : ''}</div>
+                            <span class="time">${item.rTime}</span>
+                        </div>
                     </div>
-                </div>`;
+                `;
             }
-            h += `</div>`;
-            cont.innerHTML += h;
+            cont.innerHTML += html;
         });
         cont.scrollTop = cont.scrollHeight;
     }
+
     render();
 </script>
 </body>
