@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROCADE FINAL VERIFIED</title>
+    <title>ROCADE FINAL FIXED</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
         :root {
-            --bg: #f2f3f8; /* 사진 속 그 연그레이 */
+            --bg: #f2f3f8;
             --user-blue: #e8f0fe;
             --admin-white: #ffffff;
             --accent: #7b61ff;
             --gray: #999;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Pretendard', sans-serif; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;
+            background: #111; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
+            font-family: 'Pretendard', sans-serif; overflow: hidden;
         }
 
-        /* [핵심] 폰 사이즈 고정 레이아웃 - 스크롤 보장 구조 */
+        /* 폰 컨테이너: 높이 고정 및 내부 요소 배치 최적화 */
         .phone-container {
             width: 375px; height: 812px;
             background: var(--bg);
             border-radius: 40px; border: 8px solid #333;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            display: flex; flex-direction: column; /* 세로 배치 */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; /* 자식 요소들을 세로로 쌓음 */
             overflow: hidden; position: relative;
         }
 
-        /* 1. 상단 고정 헤더 */
+        /* 1. 상단 고정 헤더: 절대 잘리지 않게 고정 높이 부여 */
         header { 
             background: white; border-bottom: 1px solid #eee; 
-            padding: 45px 20px 12px; flex-shrink: 0; z-index: 10;
+            padding: 45px 20px 15px; flex-shrink: 0; z-index: 100;
         }
         .status-bar { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -45,50 +46,42 @@
 
         .nav-info { font-size: 11px; color: #888; display: flex; justify-content: space-between; align-items: center; }
 
-        /* 2. [진짜 핵심] 채팅 영역 - 독립 스크롤 영역 */
+        /* 2. [수정 핵심] 채팅 영역: 남은 공간을 다 쓰고, 내부에서만 스크롤 */
         #chat-view { 
-            flex: 1; /* 남은 중앙 공간 다 차지 */
-            overflow-y: auto; /* 내부 스크롤 강제 활성화 */
+            flex: 1; /* 헤더와 푸터를 제외한 모든 공간 차지 */
+            min-height: 0; /* flex 자식의 스크롤 버그 방지 */
+            overflow-y: auto; /* 내부 스크롤 활성화 */
             padding: 20px; 
             display: flex; flex-direction: column; gap: 24px; 
             background: var(--bg);
-            -webkit-overflow-scrolling: touch; /* 모바일 부드러운 스크롤 */
+            -webkit-overflow-scrolling: touch;
         }
         
-        /* 스크롤바 커스텀 (있어야 스크롤 되는게 보임) */
+        /* 스크롤바 디자인 */
         #chat-view::-webkit-scrollbar { width: 4px; }
         #chat-view::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
-        /* 말풍선 디자인 (사진 싱크 100%) */
+        /* 말풍선 */
         .msg-box { display: flex; flex-direction: column; width: 100%; }
-        .bubble { max-width: 82%; padding: 12px 16px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; position: relative; }
-        
+        .bubble { max-width: 82%; padding: 12px 16px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
         .q-box { align-items: flex-end; }
         .q-bubble { background: var(--user-blue); border-radius: 18px 18px 2px 18px; color: #333; }
-        
         .a-row { display: flex; gap: 12px; margin-top: 5px; align-items: flex-start; }
         .pfp { width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; flex-shrink: 0; }
         .name-row { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; margin-bottom: 4px; color: #222; }
         .a-bubble { background: white; border-radius: 2px 18px 18px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 0.5px solid #efefef; }
-
         .meta { font-size: 10px; color: var(--gray); margin-top: 5px; display: flex; align-items: center; gap: 8px; }
         .more { color: var(--accent); font-weight: bold; cursor: pointer; text-decoration: underline; }
 
         /* 3. 하단 고정 입력창 */
         .footer-input { 
-            background: white; padding: 12px 20px 35px; border-top: 1px solid #eee; flex-shrink: 0;
+            background: white; padding: 12px 20px 35px; border-top: 1px solid #eee; flex-shrink: 0; z-index: 100;
         }
         .input-box {
             background: #f5f6f8; padding: 8px 15px; border-radius: 25px; display: flex; gap: 10px; align-items: center;
         }
-        textarea { 
-            flex: 1; border: none; outline: none; resize: none; font-size: 14px; 
-            padding: 5px 0; max-height: 80px; background: transparent; 
-        }
-        #send-btn { 
-            width: 34px; height: 34px; background: var(--accent); color: white; 
-            border: none; border-radius: 50%; cursor: pointer; font-weight: 900; flex-shrink: 0; 
-        }
+        textarea { flex: 1; border: none; outline: none; resize: none; font-size: 14px; padding: 5px 0; max-height: 80px; background: transparent; }
+        #send-btn { width: 34px; height: 34px; background: var(--accent); color: white; border: none; border-radius: 50%; cursor: pointer; font-weight: 900; flex-shrink: 0; }
 
         /* 프로필 수정 팝업 */
         #profile-edit {
@@ -97,7 +90,6 @@
             z-index: 1000; display: none; border: 1px solid #eee;
         }
         .edit-input { width: 100%; margin-bottom: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
-
         .badge { width: 15px; height: 15px; }
     </style>
 </head>
@@ -123,7 +115,7 @@
     <div id="profile-edit">
         <div style="font-size:15px; font-weight:bold; margin-bottom:15px; color:var(--accent); text-align:center;">ADMIN PROFILE</div>
         <input type="text" id="new-name" class="edit-input" placeholder="표시 이름">
-        <input type="text" id="new-color" class="edit-input" placeholder="색상 코드 (예: #7b61ff)">
+        <input type="text" id="new-color" class="edit-input" placeholder="색상 코드 (#7b61ff)">
         <button class="btn-action" style="width:100%; padding:12px; font-size:13px;" onclick="saveProfile()">저장 후 닫기</button>
     </div>
 
@@ -153,8 +145,7 @@
     };
 
     let me = null;
-    let db = JSON.parse(localStorage.getItem('rocade_perfect_v7')) || [];
-    const LIMIT = 130;
+    let db = JSON.parse(localStorage.getItem('rocade_final_fixed')) || [];
 
     function autoResize(el) {
         el.style.height = 'auto';
@@ -192,7 +183,7 @@
         const el = document.getElementById('msg-text');
         if(!el.value.trim()) return;
         db.push({id: Date.now(), q: el.value, qt: getTime(), a: null, at: null, aid: null, qo: false, ao: false});
-        localStorage.setItem('rocade_perfect_v7', JSON.stringify(db));
+        localStorage.setItem('rocade_final_fixed', JSON.stringify(db));
         el.value = ''; el.style.height = 'auto';
         render();
     }
@@ -202,15 +193,14 @@
         if(!txt) return;
         const target = db.find(x => x.id === id);
         target.a = txt; target.at = getTime(); target.aid = me.id;
-        localStorage.setItem('rocade_perfect_v7', JSON.stringify(db));
+        localStorage.setItem('rocade_final_fixed', JSON.stringify(db));
         render();
     }
 
     function getTime() {
         const d = new Date();
         const ampm = d.getHours() >= 12 ? '오후' : '오전';
-        const hour = d.getHours() % 12 || 12;
-        return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${ampm} ${hour}:${String(d.getMinutes()).padStart(2,'0')}`;
+        return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${ampm} ${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
     function toggleBtn(id, type) {
@@ -222,23 +212,17 @@
     function render() {
         const view = document.getElementById('chat-view');
         view.innerHTML = '';
-        
         db.forEach(p => {
-            const qLong = p.q.length > LIMIT;
-            const qTxt = (qLong && !p.qo) ? p.q.slice(0, LIMIT) + "..." : p.q;
-            
+            const qLong = p.q.length > 130;
+            const qTxt = (qLong && !p.qo) ? p.q.slice(0, 130) + "..." : p.q;
             let h = `<div class="msg-box q-box">
                 <div class="bubble q-bubble">${qTxt}${qLong ? `<span class="more" onclick="toggleBtn(${p.id},'q')">${p.qo?' [접기]':' [더보기]'}</span>` : ''}</div>
-                <div class="meta">
-                    ${(!p.a && me) ? `<button class="btn-action" style="background:white; color:#666; border:1px solid #ddd; margin-right:8px;" onclick="addAnswer(${p.id})">답변하기</button>` : ''}
-                    ${p.qt}
-                </div>
+                <div class="meta">${(!p.a && me) ? `<button class="btn-action" style="background:white; color:#666; border:1px solid #ddd; margin-right:8px;" onclick="addAnswer(${p.id})">답변하기</button>` : ''}${p.qt}</div>
             </div>`;
-
             if(p.a) {
                 const adm = USERS[p.aid] || {name: p.aid, col: "#999"};
-                const aLong = p.a.length > LIMIT;
-                const aTxt = (aLong && !p.ao) ? p.a.slice(0, LIMIT) + "..." : p.a;
+                const aLong = p.a.length > 130;
+                const aTxt = (aLong && !p.ao) ? p.a.slice(0, 130) + "..." : p.a;
                 h += `<div class="a-row">
                     <div class="pfp" style="background:${adm.col}">${adm.name[0]}</div>
                     <div style="flex:1">
@@ -250,13 +234,9 @@
             }
             view.innerHTML += h;
         });
-        
-        // 렌더링 직후 스크롤을 맨 아래로 이동
-        setTimeout(() => { view.scrollTop = view.scrollHeight; }, 10);
+        view.scrollTop = view.scrollHeight;
     }
-
     render();
 </script>
-
 </body>
 </html>
