@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROCADE MOBILE BOARD</title>
+    <title>ROCADE BOARD</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
@@ -17,65 +17,80 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* 폰 사이즈 고정 레이아웃 */
         body {
-            background: #333; /* 배경은 어둡게 */
+            background: #222;
             margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
             font-family: 'Pretendard', sans-serif;
         }
 
+        /* 폰 사이즈 고정 레이아웃 */
         .phone-container {
-            width: 375px; height: 812px; /* 아이폰 표준 사이즈 */
+            width: 375px; height: 812px;
             background: var(--bg);
             position: relative; display: flex; flex-direction: column;
-            overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border-radius: 40px; border: 8px solid #222;
+            overflow: hidden; border-radius: 40px; border: 8px solid #333;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
 
         /* 상단 상태바 */
         .status-bar { padding: 14px 24px 4px; display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; background: white; }
 
-        header { background: white; border-bottom: 1px solid #eee; padding: 10px 20px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .logo { font-size: 18px; font-weight: 900; color: #222; letter-spacing: -1px; }
+        header { background: white; border-bottom: 1px solid #eee; padding: 12px 20px; z-index: 10; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .logo { font-size: 19px; font-weight: 900; color: #222; letter-spacing: -1px; }
         
-        .login-ui input { width: 55px; padding: 3px; border: 1px solid #ddd; border-radius: 4px; font-size: 10px; }
-        .btn-action { padding: 4px 8px; background: var(--accent); color: white; border: none; border-radius: 4px; font-size: 10px; cursor: pointer; }
+        .login-ui input { width: 55px; padding: 3px 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 10px; }
+        .btn-action { padding: 4px 10px; background: var(--accent); color: white; border: none; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; }
 
         /* 프로필 수정 모달 */
         #profile-edit {
-            position: absolute; top: 110px; left: 20px; right: 20px; background: white;
-            padding: 15px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: absolute; top: 120px; left: 20px; right: 20px; background: white;
+            padding: 15px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             z-index: 200; display: none; border: 1px solid #eee;
         }
 
-        /* 채팅 영역 */
-        #chat-view { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 120px; }
+        /* 채팅 영역 - 스크롤 가능하게 수정 */
+        #chat-view { 
+            flex: 1; 
+            overflow-y: auto; /* 세로 스크롤 활성화 */
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 22px; 
+            padding-bottom: 100px; /* 입력창 공간 확보 */
+            -webkit-overflow-scrolling: touch; /* 모바일 부드러운 스크롤 */
+        }
+        
+        /* 스크롤바 숨기기 (선택 사항) */
+        #chat-view::-webkit-scrollbar { display: none; }
+
         .msg-box { display: flex; flex-direction: column; }
-        .bubble { max-width: 85%; padding: 12px 15px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+        .bubble { max-width: 82%; padding: 12px 16px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
 
         .q-box { align-items: flex-end; }
-        .q-bubble { background: var(--user-blue); border-radius: 18px 18px 4px 18px; color: #333; }
+        .q-bubble { background: var(--user-blue); border-radius: 18px 18px 2px 18px; color: #333; }
         
-        .a-row { display: flex; gap: 10px; margin-top: 5px; align-items: flex-start; }
-        .pfp { width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; flex-shrink: 0; background-size: cover; }
-        .name-row { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; margin-bottom: 4px; }
-        .a-bubble { background: white; border-radius: 4px 18px 18px 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .a-row { display: flex; gap: 12px; margin-top: 5px; align-items: flex-start; }
+        .pfp { width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; flex-shrink: 0; }
+        .name-row { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; margin-bottom: 4px; color: #222; }
+        .a-bubble { background: white; border-radius: 2px 18px 18px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 0.5px solid #efefef; }
 
         .meta { font-size: 10px; color: var(--gray); margin-top: 5px; display: flex; align-items: center; gap: 8px; }
-        .more { color: var(--accent); font-weight: bold; cursor: pointer; }
+        .more { color: var(--accent); font-weight: bold; cursor: pointer; text-decoration: underline; }
 
-        /* 하단 고정 메뉴 */
-        .tab-bar { position: absolute; bottom: 0; width: 100%; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 10px 0 25px; }
-        .tab { font-size: 9px; color: #ccc; text-align: center; font-weight: bold; }
-        .tab.active { color: var(--accent); }
+        /* 입력창 영역 (고정) */
+        .footer-input { 
+            position: absolute; bottom: 30px; width: 100%; padding: 0 20px; z-index: 10;
+        }
+        .input-box {
+            background: white; padding: 10px 18px; border-radius: 30px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); display: flex; gap: 10px; align-items: center;
+            border: 1px solid #f0f0f0;
+        }
+        textarea { flex: 1; border: none; outline: none; resize: none; font-size: 14px; padding: 5px 0; max-height: 100px; background: transparent; }
+        #send-btn { width: 36px; height: 36px; background: var(--accent); color: white; border: none; border-radius: 50%; cursor: pointer; font-weight: 900; flex-shrink: 0; }
 
-        /* 입력창 */
-        .input-area { position: absolute; bottom: 75px; width: 90%; left: 5%; display: flex; gap: 10px; background: white; padding: 8px 15px; border-radius: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); align-items: center; }
-        textarea { flex: 1; border: none; outline: none; resize: none; font-size: 14px; padding: 5px 0; max-height: 100px; }
-        #send-btn { width: 35px; height: 35px; background: var(--accent); color: white; border: none; border-radius: 50%; cursor: pointer; font-weight: 900; }
-
-        .badge { width: 14px; height: 14px; }
+        .badge { width: 15px; height: 15px; }
     </style>
 </head>
 <body>
@@ -92,26 +107,27 @@
                 <button class="btn-action" onclick="doLogin()">Login</button>
             </div>
         </div>
-        <div style="font-size: 11px; color: #888;">CAELUM · ARCADE · BOARD <span id="edit-btn" style="display:none; color:var(--accent); cursor:pointer; margin-left:10px;" onclick="toggleEdit()">[프로필 수정]</span></div>
+        <div style="font-size: 11px; color: #888; display:flex; justify-content: space-between;">
+            <span>CAELUM · ARCADE · BOARD</span>
+            <span id="edit-btn" style="display:none; color:var(--accent); cursor:pointer; font-weight:bold;" onclick="toggleEdit()">[프로필 수정]</span>
+        </div>
     </header>
 
     <div id="profile-edit">
-        <div style="font-size:12px; font-weight:bold; margin-bottom:10px;">관리자 설정</div>
-        <input type="text" id="new-name" placeholder="표시 이름" style="width:100%; margin-bottom:5px; font-size:12px;">
-        <input type="text" id="new-color" placeholder="배경 색상(예: #7b61ff)" style="width:100%; margin-bottom:10px; font-size:12px;">
-        <button class="btn-action" onclick="saveProfile()">저장</button>
+        <div style="font-size:13px; font-weight:bold; margin-bottom:12px; color:var(--accent);">ADMIN PROFILE EDIT</div>
+        <input type="text" id="new-name" placeholder="표시 이름" style="width:100%; margin-bottom:8px; padding:8px; border:1px solid #ddd; border-radius:5px;">
+        <input type="text" id="new-color" placeholder="배경 색상 (예: #7b61ff)" style="width:100%; margin-bottom:12px; padding:8px; border:1px solid #ddd; border-radius:5px;">
+        <button class="btn-action" style="width:100%; padding:10px;" onclick="saveProfile()">저장하기</button>
     </div>
 
     <div id="chat-view"></div>
 
-    <div class="input-area">
-        <textarea id="msg-text" placeholder="문의 내용을 입력하세요..." rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-        <button id="send-btn" onclick="addQuestion()">↑</button>
+    <div class="footer-input">
+        <div class="input-box">
+            <textarea id="msg-text" placeholder="문의 내용을 입력하세요..." rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <button id="send-btn" onclick="addQuestion()">↑</button>
+        </div>
     </div>
-
-    <nav class="tab-bar">
-        <div class="tab">FEED</div><div class="tab">EXPLORE</div><div class="tab active">BOARD</div><div class="tab">USER</div><div class="tab">SETTING</div>
-    </nav>
 </div>
 
 <svg style="display:none">
@@ -130,19 +146,18 @@
     };
 
     let me = null;
-    let db = JSON.parse(localStorage.getItem('rocade_final_v5')) || [];
-    const LIMIT = 100;
+    let db = JSON.parse(localStorage.getItem('rocade_final_v6')) || [];
+    const LIMIT = 120;
 
     function doLogin() {
         const id = document.getElementById('id-input').value;
         const pw = document.getElementById('pw-input').value;
         if(USERS[id] && USERS[id].pw === pw) {
             me = USERS[id]; me.id = id;
-            document.body.classList.add('admin-mode');
-            document.getElementById('login-zone').innerHTML = `<b style="font-size:11px">${id}</b> <button onclick="location.reload()" class="btn-action" style="background:#555">OUT</button>`;
+            document.getElementById('login-zone').innerHTML = `<b style="font-size:11px; margin-right:5px;">${id}</b> <button onclick="location.reload()" class="btn-action" style="background:#666">OUT</button>`;
             document.getElementById('edit-btn').style.display = 'inline';
             render();
-        } else alert("정보 오류!");
+        } else alert("계정 정보가 올바르지 않습니다.");
     }
 
     function toggleEdit() {
@@ -166,11 +181,12 @@
         if(!txt.trim()) return;
         db.push({id: Date.now(), q: txt, qt: getTime(), a: null, at: null, aid: null, qo: false, ao: false});
         saveAndRender();
-        document.getElementById('msg-text').value = '';
+        const input = document.getElementById('msg-text');
+        input.value = ''; input.style.height = 'auto';
     }
 
     function addAnswer(id) {
-        const txt = prompt("답변을 입력하세요 (엔터로 줄바꿈 가능):");
+        const txt = prompt("답변 내용을 입력하세요:");
         if(!txt) return;
         const target = db.find(x => x.id === id);
         target.a = txt; target.at = getTime(); target.aid = me.id;
@@ -179,11 +195,13 @@
 
     function getTime() {
         const d = new Date();
-        return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${d.getHours()>=12?'오후':'오전'} ${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}`;
+        const ampm = d.getHours() >= 12 ? '오후' : '오전';
+        const hour = d.getHours() % 12 || 12;
+        return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${ampm} ${hour}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
     function saveAndRender() {
-        localStorage.setItem('rocade_final_v5', JSON.stringify(db));
+        localStorage.setItem('rocade_final_v6', JSON.stringify(db));
         render();
     }
 
@@ -193,10 +211,15 @@
         db.forEach(p => {
             const qLong = p.q.length > LIMIT;
             const qTxt = (qLong && !p.qo) ? p.q.slice(0, LIMIT) + "..." : p.q;
+            
             let h = `<div class="msg-box q-box">
                 <div class="bubble q-bubble">${qTxt}${qLong ? `<span class="more" onclick="toggleBtn(${p.id},'q')">${p.qo?' [접기]':' [더보기]'}</span>` : ''}</div>
-                <div class="meta">${(!p.a && me) ? `<button class="btn-action" style="background:white; color:#666; border:1px solid #ddd; margin-right:5px;" onclick="addAnswer(${p.id})">답변하기</button>` : ''}${p.qt}</div>
+                <div class="meta">
+                    ${(!p.a && me) ? `<button class="btn-action" style="background:white; color:#666; border:1px solid #ddd; margin-right:8px;" onclick="addAnswer(${p.id})">답변하기</button>` : ''}
+                    ${p.qt}
+                </div>
             </div>`;
+
             if(p.a) {
                 const adm = USERS[p.aid];
                 const aLong = p.a.length > LIMIT;
