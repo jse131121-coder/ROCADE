@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROCADE BOARD FINAL</title>
+    <title>ROCADE BOARD FINAL FIX</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
@@ -18,47 +18,53 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background: #1a1a1a;
+            background: #111;
             margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
             font-family: 'Pretendard', sans-serif;
+            overflow: hidden; /* 바깥쪽 스크롤 방지 */
         }
 
-        /* 폰 고정 사이즈 및 스크롤 구조 핵심 수정 */
+        /* 폰 고정 사이즈 및 그리드 레이아웃 (스크롤 핵심) */
         .phone-container {
             width: 375px; height: 812px;
             background: var(--bg);
-            position: relative; 
-            display: flex; flex-direction: column; /* 세로 배치 */
-            overflow: hidden; 
             border-radius: 40px; border: 8px solid #333;
             box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-        }
-
-        /* 상단 고정 영역 */
-        header { 
-            background: white; border-bottom: 1px solid #eee; 
-            padding: 14px 20px; z-index: 100; flex-shrink: 0; 
-        }
-        .status-bar { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .logo { font-size: 19px; font-weight: 900; color: #222; letter-spacing: -1px; }
-        
-        .login-ui input { width: 55px; padding: 3px 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 10px; }
-        .btn-action { padding: 4px 10px; background: var(--accent); color: white; border: none; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; }
-
-        /* 채팅 영역 - 스크롤 보장 핵심 */
-        #chat-view { 
-            flex: 1; /* 남은 공간 모두 차지 */
-            overflow-y: scroll; /* 스크롤 강제 활성화 */
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 24px; 
-            -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+            display: grid;
+            grid-template-rows: auto 1fr auto; /* 헤더 / 채팅(가변) / 입력창 */
+            overflow: hidden;
             position: relative;
         }
 
-        /* 말풍선 디자인 */
+        /* 1. 헤더 영역 */
+        header { 
+            background: white; border-bottom: 1px solid #eee; 
+            padding: 45px 20px 12px; /* 상태바 공간 확보 */
+            z-index: 100;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .logo { font-size: 19px; font-weight: 900; color: #222; letter-spacing: -1px; }
+        
+        .login-ui input { width: 50px; padding: 3px 5px; border: 1px solid #ddd; border-radius: 4px; font-size: 10px; }
+        .btn-action { padding: 4px 10px; background: var(--accent); color: white; border: none; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; }
+
+        .nav-info { font-size: 11px; color: #888; display: flex; justify-content: space-between; }
+
+        /* 2. 채팅 영역 (독립 스크롤 보장) */
+        #chat-view { 
+            overflow-y: auto; /* 핵심: 내부 스크롤 활성화 */
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 22px; 
+            height: 100%; /* 부드러운 스크롤 */
+            background: var(--bg);
+        }
+        
+        /* 스크롤바 디자인 (iOS 느낌) */
+        #chat-view::-webkit-scrollbar { width: 4px; }
+        #chat-view::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+
         .msg-box { display: flex; flex-direction: column; width: 100%; }
         .bubble { max-width: 82%; padding: 12px 16px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
         
@@ -73,24 +79,24 @@
         .meta { font-size: 10px; color: var(--gray); margin-top: 5px; display: flex; align-items: center; gap: 8px; }
         .more { color: var(--accent); font-weight: bold; cursor: pointer; }
 
-        /* 하단 고정 입력창 */
+        /* 3. 하단 입력 영역 */
         .footer-input { 
-            background: var(--bg); padding: 15px 20px 35px; flex-shrink: 0; z-index: 100;
+            background: white; padding: 12px 20px 35px; border-top: 1px solid #eee;
         }
         .input-box {
-            background: white; padding: 8px 18px; border-radius: 30px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08); display: flex; gap: 10px; align-items: center;
+            background: #f5f6f8; padding: 8px 15px; border-radius: 25px; 
+            display: flex; gap: 10px; align-items: center;
         }
-        textarea { flex: 1; border: none; outline: none; resize: none; font-size: 14px; padding: 5px 0; max-height: 80px; background: transparent; }
-        #send-btn { width: 36px; height: 36px; background: var(--accent); color: white; border: none; border-radius: 50%; cursor: pointer; font-weight: 900; flex-shrink: 0; }
+        textarea { flex: 1; border: none; outline: none; resize: none; font-size: 14px; padding: 5px 0; max-height: 80px; background: transparent; font-family: inherit; }
+        #send-btn { width: 34px; height: 34px; background: var(--accent); color: white; border: none; border-radius: 50%; cursor: pointer; font-weight: 900; flex-shrink: 0; }
 
-        /* 프로필 수정 팝업 */
+        /* 프로필 수정 창 */
         #profile-edit {
-            position: absolute; top: 110px; left: 20px; right: 20px; background: white;
-            padding: 20px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            position: absolute; top: 120px; left: 20px; right: 20px; background: white;
+            padding: 20px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.3);
             z-index: 1000; display: none; border: 1px solid #eee;
         }
-        
+
         .badge { width: 15px; height: 15px; }
     </style>
 </head>
@@ -98,7 +104,6 @@
 
 <div class="phone-container">
     <header>
-        <div class="status-bar"><span>9:41</span> <span>📶 🔋</span></div>
         <div class="header-top">
             <div class="logo">ROCADE</div>
             <div id="login-zone" class="login-ui">
@@ -107,7 +112,7 @@
                 <button class="btn-action" onclick="doLogin()">Login</button>
             </div>
         </div>
-        <div style="font-size: 11px; color: #888; display:flex; justify-content: space-between;">
+        <div class="nav-info">
             <span>CAELUM · ARCADE · BOARD</span>
             <span id="edit-btn" style="display:none; color:var(--accent); cursor:pointer; font-weight:bold;" onclick="toggleEdit()">[프로필 수정]</span>
         </div>
@@ -124,7 +129,7 @@
 
     <div class="footer-input">
         <div class="input-box">
-            <textarea id="msg-text" placeholder="문의 내용을 입력하세요..." rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+            <textarea id="msg-text" placeholder="내용 입력..." rows="1" oninput="autoResize(this)"></textarea>
             <button id="send-btn" onclick="addQuestion()">↑</button>
         </div>
     </div>
@@ -132,7 +137,7 @@
 
 <svg style="display:none">
     <symbol id="star-badge" viewBox="0 0 24 24">
-        <path d="M12 0l1.5 3.5L17 2l.5 4.5L22 7l-3.5 1.5L24 12l-5.5 1.5L22 17l-4.5.5L17 22l-3.5-3.5L12 24l-1.5-3.5L7 22l-.5-4.5L2 17l3.5-1.5L0 12l5.5-1.5L2 7l4.5-.5L7 2l3.5 3.5z"/>
+        <path d="M12 0l1.5 3.5L17 2l.5 4.5L22 7l-3.5 1.5L24 12l-5.5 1.5L22 17l-4.5.5{17 22l-3.5-3.5L12 24l-1.5-3.5L7 22l-.5-4.5L2 17l3.5-1.5L0 12l5.5-1.5L2 7l4.5-.5L7 2l3.5 3.5z"/>
         <path d="M8 12.5l2.5 2.5 5-5" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
 </svg>
@@ -146,15 +151,20 @@
     };
 
     let me = null;
-    let db = JSON.parse(localStorage.getItem('rocade_scroll_fix')) || [];
+    let db = JSON.parse(localStorage.getItem('rocade_final_fix_v1')) || [];
     const LIMIT = 130;
+
+    function autoResize(el) {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+    }
 
     function doLogin() {
         const id = document.getElementById('id-input').value;
         const pw = document.getElementById('pw-input').value;
         if(USERS[id] && USERS[id].pw === pw) {
             me = JSON.parse(JSON.stringify(USERS[id])); me.id = id;
-            document.getElementById('login-zone').innerHTML = `<b style="font-size:11px;">${id}</b> <button onclick="location.reload()" class="btn-action" style="background:#555; margin-left:5px;">OUT</button>`;
+            document.getElementById('login-zone').innerHTML = `<b style="font-size:11px;">${id}</b> <button onclick="location.reload()" class="btn-action" style="background:#666; margin-left:5px;">OUT</button>`;
             document.getElementById('edit-btn').style.display = 'inline';
             render();
         } else alert("계정 정보가 올바르지 않습니다.");
@@ -170,7 +180,6 @@
     function saveProfile() {
         me.name = document.getElementById('new-name').value;
         me.col = document.getElementById('new-color').value;
-        // 현재 로그인 세션에 반영
         USERS[me.id].name = me.name;
         USERS[me.id].col = me.col;
         toggleEdit();
@@ -181,17 +190,17 @@
         const el = document.getElementById('msg-text');
         if(!el.value.trim()) return;
         db.push({id: Date.now(), q: el.value, qt: getTime(), a: null, at: null, aid: null, qo: false, ao: false});
-        localStorage.setItem('rocade_scroll_fix', JSON.stringify(db));
+        localStorage.setItem('rocade_final_fix_v1', JSON.stringify(db));
         el.value = ''; el.style.height = 'auto';
         render();
     }
 
     function addAnswer(id) {
-        const txt = prompt("답변을 입력하세요 (줄바꿈 가능):");
+        const txt = prompt("답변을 입력하세요 (엔터로 줄바꿈 가능):");
         if(!txt) return;
         const target = db.find(x => x.id === id);
         target.a = txt; target.at = getTime(); target.aid = me.id;
-        localStorage.setItem('rocade_scroll_fix', JSON.stringify(db));
+        localStorage.setItem('rocade_final_fix_v1', JSON.stringify(db));
         render();
     }
 
@@ -202,9 +211,17 @@
         return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${ampm} ${hour}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
+    function toggleBtn(id, type) {
+        const item = db.find(x => x.id === id);
+        if(type==='q') item.qo = !item.qo; else item.ao = !item.ao;
+        render();
+    }
+
     function render() {
         const view = document.getElementById('chat-view');
+        const scrollPos = view.scrollTop; // 현재 스크롤 위치 기억
         view.innerHTML = '';
+        
         db.forEach(p => {
             const qLong = p.q.length > LIMIT;
             const qTxt = (qLong && !p.qo) ? p.q.slice(0, LIMIT) + "..." : p.q;
@@ -218,7 +235,6 @@
             </div>`;
 
             if(p.a) {
-                // 수정된 프로필 정보를 실시간 반영하기 위해 USERS에서 가져옴
                 const adm = USERS[p.aid] || {name: p.aid, col: "#999"};
                 const aLong = p.a.length > LIMIT;
                 const aTxt = (aLong && !p.ao) ? p.a.slice(0, LIMIT) + "..." : p.a;
@@ -233,14 +249,9 @@
             }
             view.innerHTML += h;
         });
-        // 렌더링 후 스크롤을 맨 아래로
+        
+        // 새 메시지가 추가된 경우에만 맨 아래로, 그 외엔 위치 유지
         view.scrollTop = view.scrollHeight;
-    }
-
-    function toggleBtn(id, type) {
-        const item = db.find(x => x.id === id);
-        if(type==='q') item.qo = !item.qo; else item.ao = !item.ao;
-        render();
     }
 
     render();
