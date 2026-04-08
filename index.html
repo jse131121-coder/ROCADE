@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ROCADE BOARD - FINAL VERIFIED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ROCADE BOARD - ETERNAL VERIFIED</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
@@ -19,78 +19,92 @@
         body { 
             background: #111; margin: 0; 
             display: flex; justify-content: center; align-items: center; 
-            height: 100vh; height: -webkit-fill-available; width: 100vw; overflow: hidden; 
+            height: 100vh; width: 100vw; overflow: hidden; 
         }
 
         .phone-container {
-            width: 100%; max-width: 400px; height: 100%; 
-            background: var(--bg); display: flex; flex-direction: column; 
-            position: relative; overflow: hidden;
-        }
-
-        @media (min-width: 500px) {
-            .phone-container {
-                height: 92vh; max-height: 820px; border-radius: 45px;
-                border: 10px solid #222; box-shadow: 0 40px 100px rgba(0,0,0,0.7);
-            }
+            width: 380px; 
+            height: 92vh; 
+            max-height: 820px;
+            background: var(--bg); 
+            border-radius: 45px; 
+            border: 10px solid #222;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden;
         }
 
         header { 
-            background: white; border-bottom: 1px solid #eee; 
-            padding: env(safe-area-inset-top, 45px) 22px 18px; 
-            flex-shrink: 0; z-index: 100; 
+            background: white; 
+            border-bottom: 1px solid #eee; 
+            padding: 45px 22px 18px; 
+            flex-shrink: 0; 
+            z-index: 100; 
         }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .logo { font-size: 20px; font-weight: 900; letter-spacing: -1px; color: #111; }
         
         .login-box { display: flex; gap: 5px; }
-        .login-box input { width: 55px; padding: 6px; border: 1px solid #ddd; border-radius: 6px; font-size: 11px; outline: none; }
-        .btn-mini { padding: 6px 10px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        .login-box input { width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 6px; font-size: 11px; outline: none; }
+        .btn-mini { padding: 5px 10px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; }
 
-        .nav-info { font-size: 10px; color: #999; display: flex; justify-content: space-between; align-items: center; }
+        .nav-info { font-size: 11px; color: #999; display: flex; justify-content: space-between; align-items: center; }
 
+        /* 채팅 영역 - 요청하신 대로 간격 축소 (gap: 15px) */
         #chat-view { 
-            flex: 1; min-height: 0; overflow-y: auto; padding: 20px; 
-            display: flex; flex-direction: column; gap: 15px; /* 간격 축소 */
-            background: var(--bg); scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+            flex: 1; 
+            min-height: 0; 
+            overflow-y: auto; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            background: var(--bg); 
+            scroll-behavior: smooth;
         }
+        #chat-view::-webkit-scrollbar { width: 4px; }
+        #chat-view::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
         .msg-box { display: flex; flex-direction: column; width: 100%; position: relative; }
         
-        /* 말풍선 크기 축소 반영 */
+        /* 말풍선 크기 축소 (padding 및 font-size 조정) */
         .bubble { 
-            max-width: 82%; padding: 9px 13px; font-size: 13px; 
-            line-height: 1.5; white-space: pre-wrap; word-break: break-all; 
+            max-width: 82%; 
+            padding: 9px 13px; 
+            font-size: 13px; 
+            line-height: 1.5; 
+            white-space: pre-wrap; 
+            word-break: break-all; 
         }
         
         .q-box { align-items: flex-end; }
         .q-bubble { background: var(--user-blue); border-radius: 16px 16px 2px 16px; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .reply-trigger { font-size: 10px; color: var(--accent); font-weight: bold; cursor: pointer; margin-top: 4px; padding: 2px 5px; }
+        .reply-trigger { font-size: 10px; color: var(--accent); font-weight: bold; cursor: pointer; margin-top: 4px; padding: 2px 5px; opacity: 0.8; }
 
-        .a-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 5px; }
+        /* 답변 레이아웃 간격 축소 */
+        .a-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 4px; }
         .pfp { 
             width: 36px; height: 36px; border-radius: 12px; flex-shrink: 0; 
             background-size: cover; background-position: center; background-color: #ddd;
             display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         .a-content { flex: 1; }
         .name-row { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; margin-bottom: 3px; color: #222; }
         .a-bubble { background: white; border-radius: 2px 16px 16px 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
         .badge { width: 14px; height: 14px; }
 
-        /* 모바일 하단 잘림 방지 (env 적용) */
-        .footer-input { 
-            background: white; padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 20px)); 
-            border-top: 1px solid #eee; flex-shrink: 0; transition: 0.3s; 
-        }
+        .footer-input { background: white; padding: 15px 20px 35px; border-top: 1px solid #eee; flex-shrink: 0; transition: 0.3s; }
         .footer-input.admin-mode { background: #fff5f5; border-top: 2px solid var(--admin-mode); }
 
-        .mode-indicator { font-size: 11px; font-weight: 800; margin-bottom: 8px; display: none; justify-content: space-between; color: var(--admin-mode); }
-        .admin-mode .mode-indicator { display: flex; }
+        .mode-indicator { font-size: 11px; font-weight: 800; margin-bottom: 8px; display: none; }
+        .admin-mode .mode-indicator { display: flex; justify-content: space-between; color: var(--admin-mode); }
 
         .input-box { 
             background: #f5f6f8; padding: 10px 15px; border-radius: 20px; 
-            display: flex; align-items: flex-end; gap: 10px; border: 1px solid transparent; 
+            display: flex; align-items: flex-end; gap: 10px; border: 1px solid transparent; transition: 0.2s; 
         }
         .admin-mode .input-box { border-color: var(--admin-mode); background: white; }
         
@@ -130,21 +144,29 @@
                 <button class="btn-mini" style="margin-left:8px; background:#666;" onclick="toggleEdit()">수정</button>
             </div>
         </div>
-        <div class="nav-info"><span>CAELUM · ARCADE · BOARD</span></div>
+        <div class="nav-info">
+            <span>CAELUM · ARCADE · BOARD</span>
+        </div>
     </header>
 
     <div id="profile-edit">
         <div style="font-size:16px; font-weight:bold; margin-bottom:20px; text-align:center;">관리자 정보 수정</div>
-        <span class="edit-label">표시 이름</span><input type="text" id="edit-name" class="edit-input">
-        <span class="edit-label">테마 컬러 (Hex)</span><input type="text" id="edit-col" class="edit-input">
-        <span class="edit-label">프로필 사진 업로드</span><input type="file" id="edit-pfp" accept="image/*" class="edit-input">
+        <span class="edit-label">표시 이름</span>
+        <input type="text" id="edit-name" class="edit-input">
+        <span class="edit-label">테마 컬러 (Hex)</span>
+        <input type="text" id="edit-col" class="edit-input">
+        <span class="edit-label">프로필 사진 업로드</span>
+        <input type="file" id="edit-pfp" accept="image/*" class="edit-input">
         <button class="btn-mini" style="width:100%; padding:15px; font-size:14px;" onclick="saveProfile()">설정 저장</button>
     </div>
 
     <div id="chat-view"></div>
 
     <div class="footer-input" id="footer-wrap">
-        <div class="mode-indicator"><span>● 답변하는 중...</span><span style="cursor:pointer; text-decoration:underline;" onclick="cancelReply()">취소</span></div>
+        <div class="mode-indicator">
+            <span>● 답변하는 중...</span>
+            <span style="cursor:pointer; text-decoration:underline;" onclick="cancelReply()">취소</span>
+        </div>
         <div class="input-box">
             <textarea id="msg-input" placeholder="질문을 입력하세요..." rows="1" oninput="autoHeight(this)"></textarea>
             <button id="send-btn" onclick="handleSend()">↑</button>
@@ -168,10 +190,14 @@
     let db = JSON.parse(localStorage.getItem('rocade_db_v13')) || [];
     let replyingTo = null;
 
-    function autoHeight(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+    function autoHeight(el) {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+    }
 
     function doLogin() {
-        const id = document.getElementById('id-in').value, pw = document.getElementById('pw-in').value;
+        const id = document.getElementById('id-in').value;
+        const pw = document.getElementById('pw-in').value;
         if(USERS[id] && USERS[id].pw === pw) {
             me = {id, ...USERS[id]};
             document.getElementById('login-ui').style.display = 'none';
@@ -190,15 +216,19 @@
         }
     }
 
-    // [검수완료] 사진 저장 및 전역 동기화 로직
+    // [검수완료] 설정 저장 및 동기화 로직
     function saveProfile() {
         const file = document.getElementById('edit-pfp').files[0];
-        const name = document.getElementById('edit-name').value, col = document.getElementById('edit-col').value;
+        const name = document.getElementById('edit-name').value;
+        const col = document.getElementById('edit-col').value;
         if(name) USERS[me.id].name = name;
         if(col) USERS[me.id].col = col;
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) { USERS[me.id].pfp = e.target.result; finalizeSave(); };
+            reader.onload = function(e) {
+                USERS[me.id].pfp = e.target.result;
+                finalizeSave();
+            };
             reader.readAsDataURL(file);
         } else { finalizeSave(); }
     }
@@ -206,32 +236,41 @@
     function finalizeSave() {
         localStorage.setItem('rocade_users_v13', JSON.stringify(USERS));
         if(me) me = { ...me, ...USERS[me.id] };
-        alert("설정이 저장되었습니다!"); toggleEdit(); render();
+        alert("설정이 저장되었습니다!");
+        toggleEdit();
+        render();
     }
 
     function setReplyMode(id) {
         if(!me) return alert("관리자만 답변 가능합니다.");
         replyingTo = id;
         document.getElementById('footer-wrap').classList.add('admin-mode');
-        document.getElementById('msg-input').focus();
+        const input = document.getElementById('msg-input');
+        input.placeholder = "답변 내용을 입력하세요...";
+        input.focus();
     }
 
     function cancelReply() {
         replyingTo = null;
         document.getElementById('footer-wrap').classList.remove('admin-mode');
         const input = document.getElementById('msg-input');
-        input.value = ""; input.style.height = 'auto';
+        input.placeholder = "질문을 입력하세요...";
+        input.value = "";
+        input.style.height = 'auto';
     }
 
     function handleSend() {
         const input = document.getElementById('msg-input');
-        if(!input.value.trim()) return;
+        const val = input.value;
+        if(!val.trim()) return;
         if(replyingTo) {
-            db.find(x => x.id === replyingTo).answers.push({aid: me.id, text: input.value});
+            const target = db.find(x => x.id === replyingTo);
+            target.answers.push({aid: me.id, text: val});
             cancelReply();
         } else {
-            db.push({id: Date.now(), q: input.value, answers: []});
-            input.value = ""; input.style.height = 'auto';
+            db.push({id: Date.now(), q: val, answers: []});
+            input.value = "";
+            input.style.height = 'auto';
         }
         localStorage.setItem('rocade_db_v13', JSON.stringify(db));
         render();
@@ -241,12 +280,23 @@
         const view = document.getElementById('chat-view');
         view.innerHTML = '';
         db.forEach(item => {
-            let html = `<div class="msg-box q-box"><div class="bubble q-bubble">${item.q}</div><div class="reply-trigger" onclick="setReplyMode(${item.id})">답변하기</div></div>`;
-            item.answers.forEach(ans => {
-                const adm = USERS[ans.aid] || {name: ans.aid, col: "#999", pfp: ""};
-                const pfpStyle = adm.pfp ? `background-image:url('${adm.pfp}')` : `background-color:${adm.col}`;
-                html += `<div class="a-row"><div class="pfp" style="${pfpStyle}">${adm.pfp ? '' : (adm.name[0]||'?')}</div><div class="a-content"><div class="name-row">${adm.name} <svg class="badge" style="fill:${adm.col}"><use xlink:href="#star-badge"/></svg></div><div class="bubble a-bubble">${ans.text}</div></div></div>`;
-            });
+            let html = `<div class="msg-box q-box">
+                <div class="bubble q-bubble">${item.q}</div>
+                <div class="reply-trigger" onclick="setReplyMode(${item.id})">답변하기</div>
+            </div>`;
+            if(item.answers.length > 0) {
+                item.answers.forEach(ans => {
+                    const adm = USERS[ans.aid] || {name: ans.aid, col: "#999", pfp: ""};
+                    const pfpStyle = adm.pfp ? `background-image:url('${adm.pfp}')` : `background-color:${adm.col}`;
+                    html += `<div class="a-row">
+                        <div class="pfp" style="${pfpStyle}">${adm.pfp ? '' : (adm.name ? adm.name[0] : '?')}</div>
+                        <div class="a-content">
+                            <div class="name-row">${adm.name} <svg class="badge" style="fill:${adm.col}"><use xlink:href="#star-badge"/></svg></div>
+                            <div class="bubble a-bubble">${ans.text}</div>
+                        </div>
+                    </div>`;
+                });
+            }
             view.innerHTML += html;
         });
         view.scrollTop = view.scrollHeight;
