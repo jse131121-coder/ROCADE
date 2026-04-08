@@ -22,7 +22,6 @@
             height: 100vh; width: 100vw; overflow: hidden; 
         }
 
-        /* 메인 컨테이너 */
         .phone-container {
             width: 380px; 
             height: 92vh; 
@@ -37,7 +36,6 @@
             overflow: hidden;
         }
 
-        /* 상단 헤더 */
         header { 
             background: white; 
             border-bottom: 1px solid #eee; 
@@ -54,44 +52,48 @@
 
         .nav-info { font-size: 11px; color: #999; display: flex; justify-content: space-between; align-items: center; }
 
-        /* 채팅 스크롤 영역 */
         #chat-view { 
             flex: 1; 
             min-height: 0; 
             overflow-y: auto; 
-            padding: 25px 20px; 
+            padding: 20px; 
             display: flex; 
             flex-direction: column; 
-            gap: 35px; 
+            gap: 20px; /* 질문과 답변 사이 간격 축소 (기존 35px -> 20px) */
             background: var(--bg); 
             scroll-behavior: smooth;
         }
         #chat-view::-webkit-scrollbar { width: 4px; }
         #chat-view::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
-        /* 메시지 공통 레이아웃 */
         .msg-box { display: flex; flex-direction: column; width: 100%; position: relative; }
-        .bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
         
-        /* 질문(User) 스타일 */
+        /* 말풍선 크기 줄임 (패딩 조정: 기존 14px 18px -> 10px 14px) */
+        .bubble { 
+            max-width: 82%; 
+            padding: 10px 14px; 
+            font-size: 13.5px; 
+            line-height: 1.5; 
+            white-space: pre-wrap; 
+            word-break: break-all; 
+        }
+        
         .q-box { align-items: flex-end; }
-        .q-bubble { background: var(--user-blue); border-radius: 20px 20px 2px 20px; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .reply-trigger { font-size: 11px; color: var(--accent); font-weight: bold; cursor: pointer; margin-top: 6px; padding: 2px 5px; }
+        .q-bubble { background: var(--user-blue); border-radius: 16px 16px 2px 16px; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .reply-trigger { font-size: 10.5px; color: var(--accent); font-weight: bold; cursor: pointer; margin-top: 4px; padding: 2px 5px; }
 
-        /* 답변(Admin) 스타일 */
-        .a-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 8px; }
+        .a-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 5px; }
         .pfp { 
-            width: 44px; height: 44px; border-radius: 16px; flex-shrink: 0; 
+            width: 38px; height: 38px; border-radius: 14px; flex-shrink: 0; 
             background-size: cover; background-position: center; background-color: #ddd;
-            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 13px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
         }
         .a-content { flex: 1; }
-        .name-row { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; margin-bottom: 6px; color: #222; }
-        .a-bubble { background: white; border-radius: 2px 20px 20px 20px; box-shadow: 0 3px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
-        .badge { width: 16px; height: 16px; }
+        .name-row { display: flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 800; margin-bottom: 4px; color: #222; }
+        .a-bubble { background: white; border-radius: 2px 16px 16px 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
+        .badge { width: 15px; height: 15px; }
 
-        /* 하단 변신형 입력창 */
         .footer-input { background: white; padding: 15px 20px 35px; border-top: 1px solid #eee; flex-shrink: 0; transition: 0.3s; }
         .footer-input.admin-mode { background: #fff5f5; border-top: 2px solid var(--admin-mode); }
 
@@ -115,7 +117,6 @@
         }
         .admin-mode #send-btn { background: var(--admin-mode); }
 
-        /* 수정 모달 */
         #profile-edit {
             position: absolute; top: 130px; left: 30px; right: 30px; background: white;
             padding: 30px; border-radius: 30px; box-shadow: 0 25px 60px rgba(0,0,0,0.4);
@@ -217,10 +218,8 @@
         const file = document.getElementById('edit-pfp').files[0];
         const name = document.getElementById('edit-name').value;
         const col = document.getElementById('edit-col').value;
-
-        USERS[me.id].name = name || USERS[me.id].name;
-        USERS[me.id].col = col || USERS[me.id].col;
-
+        if(name) USERS[me.id].name = name;
+        if(col) USERS[me.id].col = col;
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -228,14 +227,12 @@
                 finalizeSave();
             };
             reader.readAsDataURL(file);
-        } else {
-            finalizeSave();
-        }
+        } else { finalizeSave(); }
     }
 
     function finalizeSave() {
         localStorage.setItem('rocade_users_v13', JSON.stringify(USERS));
-        me = { ...me, ...USERS[me.id] };
+        if(me) me = { ...me, ...USERS[me.id] };
         alert("설정이 저장되었습니다!");
         toggleEdit();
         render();
@@ -245,9 +242,8 @@
         if(!me) return alert("관리자만 답변 가능합니다.");
         replyingTo = id;
         document.getElementById('footer-wrap').classList.add('admin-mode');
-        const input = document.getElementById('msg-input');
-        input.placeholder = "답변 내용을 입력하세요...";
-        input.focus();
+        document.getElementById('msg-input').placeholder = "답변 내용을 입력하세요...";
+        document.getElementById('msg-input').focus();
     }
 
     function cancelReply() {
@@ -263,7 +259,6 @@
         const input = document.getElementById('msg-input');
         const val = input.value;
         if(!val.trim()) return;
-
         if(replyingTo) {
             const target = db.find(x => x.id === replyingTo);
             target.answers.push({aid: me.id, text: val});
@@ -273,7 +268,6 @@
             input.value = "";
             input.style.height = 'auto';
         }
-        
         localStorage.setItem('rocade_db_v13', JSON.stringify(db));
         render();
     }
@@ -286,19 +280,14 @@
                 <div class="bubble q-bubble">${item.q}</div>
                 <div class="reply-trigger" onclick="setReplyMode(${item.id})">답변하기</div>
             </div>`;
-
             if(item.answers.length > 0) {
                 item.answers.forEach(ans => {
                     const adm = USERS[ans.aid] || {name: ans.aid, col: "#999", pfp: ""};
                     const pfpStyle = adm.pfp ? `background-image:url('${adm.pfp}')` : `background-color:${adm.col}`;
-                    html += `
-                    <div class="a-row">
-                        <div class="pfp" style="${pfpStyle}">${adm.pfp ? '' : adm.name[0]}</div>
+                    html += `<div class="a-row">
+                        <div class="pfp" style="${pfpStyle}">${adm.pfp ? '' : (adm.name ? adm.name[0] : '?')}</div>
                         <div class="a-content">
-                            <div class="name-row">
-                                ${adm.name} 
-                                <svg class="badge" style="fill:${adm.col}"><use xlink:href="#star-badge"/></svg>
-                            </div>
+                            <div class="name-row">${adm.name} <svg class="badge" style="fill:${adm.col}"><use xlink:href="#star-badge"/></svg></div>
                             <div class="bubble a-bubble">${ans.text}</div>
                         </div>
                     </div>`;
@@ -308,7 +297,6 @@
         });
         view.scrollTop = view.scrollHeight;
     }
-
     render();
 </script>
 </body>
