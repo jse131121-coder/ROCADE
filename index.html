@@ -6,20 +6,45 @@
     <title>ROCADE BOARD - ETERNAL VERIFIED</title>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        :root { --bg: #f2f3f8; --accent: #7b61ff; --user-blue: #e8f0fe; --admin-mode: #ff4757; }
-        * { box-sizing: border-box; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #111; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-
-        /* 폰 컨테이너: 중앙 고정 및 잘림 방지 */
-        .phone-container {
-            width: 380px; height: 92vh; max-height: 820px;
-            background: var(--bg); border-radius: 45px; border: 10px solid #222;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
-            display: flex; flex-direction: column; position: relative; overflow: hidden;
+        
+        :root { 
+            --bg: #f2f3f8; 
+            --accent: #7b61ff; 
+            --user-blue: #e8f0fe; 
+            --admin-mode: #ff4757; 
         }
 
-        /* 헤더 섹션 */
-        header { background: white; border-bottom: 1px solid #eee; padding: 45px 22px 18px; flex-shrink: 0; z-index: 100; }
+        * { box-sizing: border-box; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: #111; margin: 0; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; width: 100vw; overflow: hidden; 
+        }
+
+        /* 메인 컨테이너 */
+        .phone-container {
+            width: 380px; 
+            height: 92vh; 
+            max-height: 820px;
+            background: var(--bg); 
+            border-radius: 45px; 
+            border: 10px solid #222;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden;
+        }
+
+        /* 상단 헤더 */
+        header { 
+            background: white; 
+            border-bottom: 1px solid #eee; 
+            padding: 45px 22px 18px; 
+            flex-shrink: 0; 
+            z-index: 100; 
+        }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .logo { font-size: 20px; font-weight: 900; letter-spacing: -1px; color: #111; }
         
@@ -29,25 +54,31 @@
 
         .nav-info { font-size: 11px; color: #999; display: flex; justify-content: space-between; align-items: center; }
 
-        /* 채팅 영역 */
+        /* 채팅 스크롤 영역 */
         #chat-view { 
-            flex: 1; min-height: 0; overflow-y: auto; padding: 25px 20px; 
-            display: flex; flex-direction: column; gap: 35px; background: var(--bg); 
+            flex: 1; 
+            min-height: 0; 
+            overflow-y: auto; 
+            padding: 25px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 35px; 
+            background: var(--bg); 
             scroll-behavior: smooth;
         }
         #chat-view::-webkit-scrollbar { width: 4px; }
         #chat-view::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
 
-        /* 말풍선 레이아웃 */
+        /* 메시지 공통 레이아웃 */
         .msg-box { display: flex; flex-direction: column; width: 100%; position: relative; }
         .bubble { max-width: 85%; padding: 14px 18px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
         
-        /* 질문 스타일 */
+        /* 질문(User) 스타일 */
         .q-box { align-items: flex-end; }
         .q-bubble { background: var(--user-blue); border-radius: 20px 20px 2px 20px; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .reply-trigger { font-size: 11px; color: var(--accent); font-weight: bold; cursor: pointer; margin-top: 6px; padding: 2px 5px; }
 
-        /* 답변 스타일 (이미지 피드백 반영) */
+        /* 답변(Admin) 스타일 */
         .a-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 8px; }
         .pfp { 
             width: 44px; height: 44px; border-radius: 16px; flex-shrink: 0; 
@@ -60,14 +91,17 @@
         .a-bubble { background: white; border-radius: 2px 20px 20px 20px; box-shadow: 0 3px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
         .badge { width: 16px; height: 16px; }
 
-        /* 하단 입력창 섹션 (변신형) */
+        /* 하단 변신형 입력창 */
         .footer-input { background: white; padding: 15px 20px 35px; border-top: 1px solid #eee; flex-shrink: 0; transition: 0.3s; }
         .footer-input.admin-mode { background: #fff5f5; border-top: 2px solid var(--admin-mode); }
 
         .mode-indicator { font-size: 11px; font-weight: 800; margin-bottom: 8px; display: none; }
         .admin-mode .mode-indicator { display: flex; justify-content: space-between; color: var(--admin-mode); }
 
-        .input-box { background: #f5f6f8; padding: 10px 15px; border-radius: 20px; display: flex; align-items: flex-end; gap: 10px; border: 1px solid transparent; transition: 0.2s; }
+        .input-box { 
+            background: #f5f6f8; padding: 10px 15px; border-radius: 20px; 
+            display: flex; align-items: flex-end; gap: 10px; border: 1px solid transparent; transition: 0.2s; 
+        }
         .admin-mode .input-box { border-color: var(--admin-mode); background: white; }
         
         textarea { 
@@ -76,12 +110,12 @@
         }
         #send-btn { 
             width: 38px; height: 38px; background: var(--accent); color: white; 
-            border: none; border-radius: 50%; cursor: pointer; font-weight: bold; flex-shrink: 0;
+            border: none; border-radius: 50%; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center; font-size: 20px;
         }
         .admin-mode #send-btn { background: var(--admin-mode); }
 
-        /* 프로필 수정 모달 */
+        /* 수정 모달 */
         #profile-edit {
             position: absolute; top: 130px; left: 30px; right: 30px; background: white;
             padding: 30px; border-radius: 30px; box-shadow: 0 25px 60px rgba(0,0,0,0.4);
@@ -123,8 +157,7 @@
         <button class="btn-mini" style="width:100%; padding:15px; font-size:14px;" onclick="saveProfile()">설정 저장</button>
     </div>
 
-    <div id="chat-view">
-        </div>
+    <div id="chat-view"></div>
 
     <div class="footer-input" id="footer-wrap">
         <div class="mode-indicator">
@@ -152,7 +185,7 @@
     let USERS = JSON.parse(localStorage.getItem('rocade_users_v13')) || DEFAULT_USERS;
     let me = null;
     let db = JSON.parse(localStorage.getItem('rocade_db_v13')) || [];
-    let replyingTo = null; // 현재 어떤 질문에 답변 중인지 저장
+    let replyingTo = null;
 
     function autoHeight(el) {
         el.style.height = 'auto';
@@ -185,13 +218,13 @@
         const name = document.getElementById('edit-name').value;
         const col = document.getElementById('edit-col').value;
 
-        USERS[me.id].name = name;
-        USERS[me.id].col = col;
+        USERS[me.id].name = name || USERS[me.id].name;
+        USERS[me.id].col = col || USERS[me.id].col;
 
-        if(file) {
+        if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                USERS[me.id].pfp = reader.result;
+            reader.onload = function(e) {
+                USERS[me.id].pfp = e.target.result;
                 finalizeSave();
             };
             reader.readAsDataURL(file);
@@ -202,44 +235,43 @@
 
     function finalizeSave() {
         localStorage.setItem('rocade_users_v13', JSON.stringify(USERS));
+        me = { ...me, ...USERS[me.id] };
+        alert("설정이 저장되었습니다!");
         toggleEdit();
         render();
     }
 
-    // [중요] 답변 모드 진입
     function setReplyMode(id) {
         if(!me) return alert("관리자만 답변 가능합니다.");
         replyingTo = id;
-        const wrap = document.getElementById('footer-wrap');
+        document.getElementById('footer-wrap').classList.add('admin-mode');
         const input = document.getElementById('msg-input');
-        wrap.classList.add('admin-mode');
         input.placeholder = "답변 내용을 입력하세요...";
         input.focus();
     }
 
     function cancelReply() {
         replyingTo = null;
-        const wrap = document.getElementById('footer-wrap');
+        document.getElementById('footer-wrap').classList.remove('admin-mode');
         const input = document.getElementById('msg-input');
-        wrap.classList.remove('admin-mode');
         input.placeholder = "질문을 입력하세요...";
         input.value = "";
         input.style.height = 'auto';
     }
 
     function handleSend() {
-        const val = document.getElementById('msg-input').value;
+        const input = document.getElementById('msg-input');
+        const val = input.value;
         if(!val.trim()) return;
 
         if(replyingTo) {
-            // 답변 모드
             const target = db.find(x => x.id === replyingTo);
             target.answers.push({aid: me.id, text: val});
             cancelReply();
         } else {
-            // 질문 모드
             db.push({id: Date.now(), q: val, answers: []});
-            document.getElementById('msg-input').value = "";
+            input.value = "";
+            input.style.height = 'auto';
         }
         
         localStorage.setItem('rocade_db_v13', JSON.stringify(db));
@@ -250,13 +282,11 @@
         const view = document.getElementById('chat-view');
         view.innerHTML = '';
         db.forEach(item => {
-            // 질문 렌더링
             let html = `<div class="msg-box q-box">
                 <div class="bubble q-bubble">${item.q}</div>
                 <div class="reply-trigger" onclick="setReplyMode(${item.id})">답변하기</div>
             </div>`;
 
-            // 답변 렌더링 (이미지 피드백 반영: 프사와 이름, 내용을 완벽히 정렬)
             if(item.answers.length > 0) {
                 item.answers.forEach(ans => {
                     const adm = USERS[ans.aid] || {name: ans.aid, col: "#999", pfp: ""};
