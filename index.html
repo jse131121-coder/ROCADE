@@ -188,19 +188,18 @@
         }
     }
 
-    // 수정된 프로필 저장 로직 (버그 해결)
+    // 완전히 확실한 저장 및 동기화 로직
     async function saveProfile() {
-        const file = document.getElementById('edit-pfp').files[0];
-        const nameInput = document.getElementById('edit-name').value;
-        const colInput = document.getElementById('edit-col').value;
-
         if(!me) return;
+        const file = document.getElementById('edit-pfp').files[0];
+        const newName = document.getElementById('edit-name').value;
+        const newCol = document.getElementById('edit-col').value;
 
-        // 텍스트 정보 먼저 업데이트
-        USERS[me.id].name = nameInput;
-        USERS[me.id].col = colInput;
+        // 1. 메모리상의 USERS 객체 먼저 수정
+        USERS[me.id].name = newName;
+        USERS[me.id].col = newCol;
 
-        // 이미지 처리
+        // 2. 이미지 파일이 있으면 Base64 변환 후 저장
         if (file) {
             const base64 = await new Promise((resolve) => {
                 const reader = new FileReader();
@@ -210,13 +209,15 @@
             USERS[me.id].pfp = base64;
         }
 
-        // 최종 저장 및 상태 동기화
+        // 3. 로컬 스토리지에 즉시 물리적 저장
         localStorage.setItem('rocade_users_v13', JSON.stringify(USERS));
+        
+        // 4. 현재 로그인된 세션 정보(me)도 최신화 (이게 빠지면 즉시 반영 안됨)
         me = { ...me, ...USERS[me.id] }; 
         
-        alert("성공적으로 저장되었습니다!");
+        alert("설정이 저장되었습니다!");
         toggleEdit();
-        render();
+        render(); // 화면 다시 그리기
     }
 
     function setReplyMode(id) {
@@ -253,6 +254,7 @@
         db.forEach(item => {
             let html = `<div class="msg-box q-box"><div class="bubble q-bubble">${item.q}</div><div class="reply-trigger" onclick="setReplyMode(${item.id})">답변하기</div></div>`;
             item.answers.forEach(ans => {
+                // 저장된 USERS에서 실시간으로 정보를 가져옴
                 const adm = USERS[ans.aid] || {name: ans.aid, col: "#999", pfp: ""};
                 const pfpStyle = adm.pfp ? `background-image:url('${adm.pfp}')` : `background-color:${adm.col}`;
                 html += `<div class="a-row"><div class="pfp" style="${pfpStyle}">${adm.pfp ? '' : (adm.name[0]||'?')}</div><div class="a-content"><div class="name-row">${adm.name} <svg class="badge" style="fill:${adm.col}"><use xlink:href="#star-badge"/></svg></div><div class="bubble a-bubble">${ans.text}</div></div></div>`;
